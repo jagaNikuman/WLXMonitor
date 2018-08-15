@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"gopkg.in/yaml.v2"
@@ -65,36 +66,12 @@ func insertData(config *Config, device string, tag string, value int) {
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(sendMessage)))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	client := http.Client{}
-	resp, _ := client.Do(req)
-	fmt.Println(resp.Status)
+	_, err := client.Do(req)
+	if err != nil {
+		fmt.Printf("ERROR: %s\n", err)
+	}
 }
 
-func main() {
-	var config Config
-	loadConfig("./config.yaml", &config)
-	res := getHTML(&config)
-	var values Values
-
-	doc, _ := goquery.NewDocumentFromResponse(res)
-
-	fmt.Println(config.Username)
-	s := doc.Find(config.WLX313.Selectors.Client2G)
-	values.Clients2G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
-
-	s = doc.Find(config.WLX313.Selectors.Client5G)
-	values.Clients5G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
-
-	s = doc.Find(config.WLX313.Selectors.CPU)
-	values.CPU, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "%"))
-
-	s = doc.Find(config.WLX313.Selectors.Mem)
-	values.Mem, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "%"))
-
-	s = doc.Find(config.WLX313.Selectors.Temp)
-	values.Temp, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "℃"))
-
-	insertAllData(&config, "wlx313", &values)
-}
 func insertAllData(config *Config, device string, values *Values) {
 	//value
 	v := reflect.Indirect(reflect.ValueOf(values))
@@ -104,7 +81,38 @@ func insertAllData(config *Config, device string, values *Values) {
 		//value of i
 		f := v.Field(i)
 		value := f.Interface()
-		fmt.Printf("%s: %d\n", strings.ToLower(t.Field(i).Name), value)
 		insertData(config, device, "type="+strings.ToLower(t.Field(i).Name), value.(int))
+	}
+}
+
+func getValues(selectors *Selector, doc *goquery.Document, values *Values) {
+	s := doc.Find(selectors.Client2G)
+	values.Clients2G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
+
+	s = doc.Find(selectors.Client5G)
+	values.Clients5G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
+
+	s = doc.Find(selectors.CPU)
+	values.CPU, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "%"))
+
+	s = doc.Find(selectors.Mem)
+	values.Mem, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "%"))
+
+	s = doc.Find(selectors.Temp)
+	values.Temp, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "℃"))
+}
+
+func main() {
+	var config Config
+	loadConfig("./config.yaml", &config)
+	var values Values
+
+	for {
+		res := getHTML(&config)
+		doc, _ := goquery.NewDocumentFromResponse(res)
+		getValues(&config.WLX313.Selectors, doc, &values)
+		insertAllData(&config, "wlx313", &values)
+		fmt.Println("Inserted Datas. Waiting 3 seconds....")
+		time.Sleep(3 * time.Second)
 	}
 }
