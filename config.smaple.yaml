@@ -1,8 +1,13 @@
-targetURL: "http://127.0.0.1/index.html"
-userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
-selectors:
-  cpu:  "<CSS Selector>"
-  mem:  "<CSS Selector>"
-  temp: "<CSS Selector>"
-  2G:   "<CSS Selector>"
-  5G:   "<CSS Selector>"
+dbname: wlx
+dburl: "<Influx DB Address>"
+username: username
+password: password
+wlx313: 
+  selectors: 
+    2G: "#content > div:nth-child(6) > div.settings-content > table > tbody > tr:nth-child(5) > td:nth-child(2)"
+    5G: "#content > div:nth-child(7) > div.settings-content > table > tbody > tr:nth-child(5) > td:nth-child(2)"
+    cpu: "#content > div:nth-child(5) > div.settings-content > table > tbody > tr:nth-child(6) > td:nth-child(2)"
+    mem: "#content > div:nth-child(5) > div.settings-content > table > tbody > tr:nth-child(7) > td:nth-child(2)"
+    temp: "#content > div:nth-child(5) > div.settings-content > table > tbody > tr:nth-child(11) > td:nth-child(2)"
+  targetURL: "<WLX313 Information Page URL>"
+  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
