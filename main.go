@@ -80,7 +80,6 @@ func main() {
 	fmt.Println(config.Username)
 	s := doc.Find(config.WLX313.Selectors.Client2G)
 	values.Clients2G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
-	// clients2G2, _ := strconv.Atoi(clients2G)
 
 	s = doc.Find(config.WLX313.Selectors.Client5G)
 	values.Clients5G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
@@ -94,18 +93,7 @@ func main() {
 	s = doc.Find(config.WLX313.Selectors.Temp)
 	values.Temp, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "℃"))
 
-	// fmt.Printf("Clients2G: %d台\n", values.Clients5G)
-	// fmt.Printf("Clients5G: %d台\n", values.Clients2G)
-	// fmt.Printf("CPU Usage: %d%%\n", values.CPU)
-	// fmt.Printf("MEM Usage: %d%%\n", values.Mem)
-	// fmt.Printf("Temperature: %d度\n", values.Temp)
-
 	insertAllData(&config, "wlx313", &values)
-	// insertData(&config, "wlx303", "type=client2g", clients2G)
-	// insertData(&config, "wlx303", "type=client2g", clients2G)
-	// insertData(&config, "wlx303", "type=client2g", clients2G)
-	// insertData(&config, "wlx303", "type=client2g", clients2G)
-	// insertData(&config, "wlx303", "type=client2g", clients2G)
 }
 func insertAllData(config *Config, device string, values *Values) {
 	//value
