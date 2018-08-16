@@ -66,10 +66,11 @@ func insertData(config *Config, device string, tag string, value int) {
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer([]byte(sendMessage)))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	client := http.Client{}
-	_, err := client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("ERROR: %s\n", err)
 	}
+	defer resp.Body.Close()
 }
 
 func insertAllData(config *Config, device string, values *Values) {
