@@ -1,0 +1,13 @@
+dbname: wlx
+dburl: "http://192.168.1.17:8086/"
+password: ~
+username: admin
+wlx313: 
+  selectors: 
+    2G: "#show-wireless > tbody > tr:nth-child(3) > td:nth-child(8)"
+    5G: "#content > div:nth-child(7) > div.settings-content > table > tbody > tr:nth-child(5) > td:nth-child(2)"
+    cpu: "#content > div:nth-child(5) > div.settings-content > table > tbody > tr:nth-child(6) > td:nth-child(2)"
+    mem: "#content > div:nth-child(5) > div.settings-content > table > tbody > tr:nth-child(7) > td:nth-child(2)"
+    temp: "#content > div:nth-child(5) > div.settings-content > table > tbody > tr:nth-child(11) > td:nth-child(2)"
+  targetURL: "http://192.168.1.244/controller-apinfo.html"
+  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"

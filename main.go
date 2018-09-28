@@ -16,8 +16,9 @@ import (
 )
 
 type Config struct {
-	DBUrl    string `yaml:"dburl"`
-	DBName   string `yaml:"dbname"`
+	DBUrl  string `yaml:"dburl"`
+	DBName string `yaml:"dbname"`
+
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	WLX313   WLX313 `yaml:"wlx313"`
@@ -55,7 +56,10 @@ func getHTML(config *Config) *http.Response {
 	req, _ := http.NewRequest("GET", config.WLX313.TargetURL, nil)
 	req.Header.Set("User-Agent", config.WLX313.UserAgent)
 	req.SetBasicAuth(config.Username, config.Password)
-	res, _ := httpClient.Do(req)
+	res, err := httpClient.Do(req)
+	if err != nil {
+		println(err)
+	}
 
 	return res
 }
@@ -103,17 +107,40 @@ func getValues(selectors *Selector, doc *goquery.Document, values *Values) {
 	values.Temp, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "℃"))
 }
 
+func getRTX313Values(selectors *Selector, doc *goquery.Document, values *Values) {
+	s := doc.Find(selectors.Client2G)
+	fmt.Println(s.Text())
+	values.Clients2G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
+}
+
 func main() {
 	var config Config
 	loadConfig("./config.yaml", &config)
 	var values Values
 
+	var config2 Config
+	loadConfig("./config2.yaml", &config2)
+	var values2 Values
+
 	for {
+
 		res := getHTML(&config)
-		doc, _ := goquery.NewDocumentFromResponse(res)
+		doc, err := goquery.NewDocumentFromResponse(res)
+		if err != nil {
+			println(err)
+		}
 		getValues(&config.WLX313.Selectors, doc, &values)
-		insertAllData(&config, "wlx313", &values)
-		fmt.Println("Inserted Datas. Waiting 3 seconds....")
+		fmt.Println(values)
+		insertAllData(&config, "wlx313_1", &values)
+		fmt.Println("WLX313_1 Inserted Datas.")
+
+		res = getHTML(&config2)
+		doc, _ = goquery.NewDocumentFromResponse(res)
+		getValues(&config2.WLX313.Selectors, doc, &values2)
+		fmt.Println(values2)
+		insertAllData(&config2, "wlx313_2", &values2)
+		fmt.Println("WLX313_1 Inserted Datas. Waiting 3 seconds....")
 		time.Sleep(3 * time.Second)
+
 	}
 }
