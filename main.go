@@ -92,10 +92,10 @@ func insertAllData(config *Config, device string, values *Values) {
 
 func getValues(selectors *Selector, doc *goquery.Document, values *Values) {
 	s := doc.Find(selectors.Client2G)
-	values.Clients2G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
+	values.Clients2G, _ = strconv.Atoi(strings.TrimSpace(strings.Trim(strings.TrimSpace(s.Text()), "台")))
 
 	s = doc.Find(selectors.Client5G)
-	values.Clients5G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
+	values.Clients5G, _ = strconv.Atoi(strings.TrimSpace(strings.Trim(strings.TrimSpace(s.Text()), "台")))
 
 	s = doc.Find(selectors.CPU)
 	values.CPU, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "%"))
@@ -108,7 +108,7 @@ func getValues(selectors *Selector, doc *goquery.Document, values *Values) {
 }
 
 func getRTX313Values(selectors *Selector, doc *goquery.Document, values *Values) {
-	s := doc.Find(selectors.Client2G)
+	s := doc.Find(selectors.Client5G)
 	fmt.Println(s.Text())
 	values.Clients2G, _ = strconv.Atoi(strings.Trim(strings.TrimSpace(s.Text()), "台"))
 }
@@ -130,6 +130,7 @@ func main() {
 			println(err)
 		}
 		getValues(&config.WLX313.Selectors, doc, &values)
+		// getRTX313Values(&config.WLX313.Selectors, doc, &values)
 		fmt.Println(values)
 		insertAllData(&config, "wlx313_1", &values)
 		fmt.Println("WLX313_1 Inserted Datas.")
